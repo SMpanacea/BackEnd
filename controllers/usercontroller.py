@@ -13,3 +13,14 @@ user = Blueprint('user', __name__)  # Blueprint를 이용하면 controller처럼
 def login():
     user_service = User_ServiceImp()
     return user_service.login(request.form['id'], request.form['password'])
+
+@user.route('/register', methods=['POST']) #post 방식만 잡아서 처리한다.
+def register():
+    user_service = User_ServiceImp()
+    jsonData = request.get_json()
+    return user_service.register(jsonData['uid'], 
+                                 jsonData['upw'],
+                                 jsonData['email'],
+                                 jsonData['nickname'],
+                                 jsonData['gender'],
+                                 jsonData['birth'])

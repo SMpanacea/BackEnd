@@ -11,7 +11,7 @@ class User_Service(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def register(self, id, password):  #회원가입 함수
+    def register(self, uid, upw, email, nickname, gender, birth):  #회원가입 함수
         pass
 
     

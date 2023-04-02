@@ -38,11 +38,10 @@ class User_ServiceImp(User_Service):
         return 'logout'
 
 
-    def register(self, name, id, password): #회원가입 함수
+    def register(self, uid, upw, email, nickname, gender, birth): #회원가입 함수
 
         try:  #try catch문을 사용하여 데이터 저장
-            print(name, id, password)
-            self.cur.execute("INSERT INTO users (user_name, user_id, pass) VALUES (%s, %s, %s)", (name, id, password)) #데이터 저장 
+            self.cur.execute("INSERT INTO users (uid, upw, email, nickname, gender, birth) VALUES (%s, %s, %s, %s, %s, %s)", (uid, upw, email, nickname, gender, birth)) #데이터 저장 
             self.conn.commit() #저장후 db commit
         except Exception as e:
             print(e)
