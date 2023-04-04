@@ -18,20 +18,20 @@ class User_ServiceImp(User_Service):
     def __init__(self): #생성자
         self.cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor) #PostgreSQL 연결
 
-    def login(self, id, password):  #로그인 함수
+    def login(self, uid, upw):  #로그인 함수
         
-        s = "SELECT * FROM users where user_id = '"+id+"' and pass = '"+password+"';"
+        s = "SELECT * FROM users where uid = '"+uid+"' and upw = '"+upw+"';"
 
         try:
             self.cur.execute(s) 
             result = self.cur.fetchone() #결과값 하나를 변수에 저장함
             if  result: # 결과값이 존재한다면 로그인 성공
-                return "True" + s
+                return "true"
             else :   # 결과값이 존재하지 않는다면 로그인 실패
-                return "False" + s
+                return "false"
         except Exception as e:
             print(e)
-        return 'fail'
+        return 'false'
     
 
     def logout(self):
@@ -45,8 +45,8 @@ class User_ServiceImp(User_Service):
             self.conn.commit() #저장후 db commit
         except Exception as e:
             print(e)
-            return 'fail'  # 데이터 저장이 실패한 경우 fail 반환
-        return 'success'  #데이터 저장이 성공한 경우 success 반환
+            return 'false'  # 데이터 저장이 실패한 경우 false 반환
+        return 'true'  #데이터 저장이 성공한 경우 true 반환
             
 
     def jsontest(): #json 데이터 테스트
@@ -54,7 +54,7 @@ class User_ServiceImp(User_Service):
             # jsonData = request.get_json()
             # print (jsonData['id'])
             # print (jsonData['password'])
-            return 'success'
+            return 'false'
         except Exception as e:
             print(e)
-            return 'fail'
+            return 'true'
