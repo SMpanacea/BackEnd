@@ -9,14 +9,14 @@ import requests
 
 class Medicine_Service_Imp(Medicine_Service):
 
-    def search(self, itemSeq):
+    def search(self, pageNo, entpName, itemName, itemSeq, efcyQesitm):
         params ={'serviceKey' : config.key,
-                'pageNo' : '1', 
-                'numOfRows' : '3', 
-                'entpName' : '', 
-                'itemName' : '', 
+                'pageNo' : pageNo, 
+                'numOfRows' : '10', 
+                'entpName' : entpName, 
+                'itemName' : itemName, 
                 'itemSeq' : itemSeq, 
-                'efcyQesitm' : '', 
+                'efcyQesitm' : efcyQesitm, 
                 'useMethodQesitm' : '', 
                 'atpnWarnQesitm' : '', 
                 'atpnQesitm' : '', 
@@ -25,7 +25,7 @@ class Medicine_Service_Imp(Medicine_Service):
                 'depositMethodQesitm' : '', 
                 'openDe' : '', 
                 'updateDe' : '', 
-                'type' : 'xml' }
+                'type' : 'json' }
         response = requests.get(config.url, params=params)
         return response.content
     
