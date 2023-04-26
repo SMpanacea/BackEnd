@@ -69,3 +69,8 @@ def email_check(): # 이메일 중복체크
     return user_service.overlap_check("email",jsonData['email'])
 
 
+@user.route('/sendemail', methods=['POST'])
+def send_email(): # 이메일 인증번호 전송
+    user_service = User_ServiceImp()
+    jsonData = request.get_json()
+    return user_service.send_email(jsonData['email'])
