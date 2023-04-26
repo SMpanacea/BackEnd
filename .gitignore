@@ -1,2 +1,11 @@
+# Flask related
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyc
+instance/
+.env
+
 secret_key/
 migrations/
