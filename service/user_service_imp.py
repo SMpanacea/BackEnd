@@ -1,12 +1,20 @@
 import sys
 import os
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from service.user_service import User_Service
 from models import db
 from models import User
-from flask import jsonify
+from flask import jsonify   #json 형태로 데이터를 반환하기 위해 사용
+
+
+#aws s3 사용을 위한 모듈
+import boto3   
+from botocore.exceptions import ClientError 
+
+# 키 값들을 가져오기 위해 사용
+import secret_key.config as config
+
 
 class User_ServiceImp(User_Service):
 
@@ -56,3 +64,28 @@ class User_ServiceImp(User_Service):
             return 'false'  # 데이터 저장이 실패한 경우 false 반환
         else:
             return 'true'  #데이터 저장이 성공한 경우 true 반환
+        
+    def overlap_check(self, key, value):    #중복체크 함수
+        print("key:" + key + "  value: " + value)
+        try:
+            result = db.session.query(User).filter_by(**{key: value}).all()
+        except Exception as e:
+            print(e)
+            return 'false'
+        else:
+            if result: #결과값이 존재한다면 중복된 값이 존재
+                return 'false'
+            else:   #결과값이 존재하지 않는다면 중복된 값이 존재하지 않음
+                return 'true'
+            
+
+    def withdrawal(self, uid):  #회원탈퇴 함수
+        try:
+            db.session.query(User).filter_by(uid = uid).delete()
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            return 'false'
+        else:
+            return 'true'
+        

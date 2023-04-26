@@ -9,7 +9,7 @@ from service.medicine_service_imp import Medicine_Service_Imp
 
 medicine = Blueprint('medicine', __name__)  # Blueprint를 이용하면 controller처럼 사용할 수 있다. 
 
-@medicine.route('/search', methods=['GET']) #post 방식만 잡아서 처리한다.
+@medicine.route('/search', methods=['GET']) #get 방식만 잡아서 처리한다.
 def search():
     medicine_service = Medicine_Service_Imp()
     itemSeq = request.args.get("itemSeq", '')   # 품목기준코드
@@ -19,3 +19,9 @@ def search():
     efcyQesitm = request.args.get("efcyQesitm", '') #효능 
 
     return medicine_service.search(pageNo, entpName, itemName, itemSeq, efcyQesitm)
+
+@medicine.route('/detail', methods=['GET']) 
+def detail():
+    medicine_service = Medicine_Service_Imp()
+    itemSeq = request.args.get("itemSeq", '')   # 품목기준코드
+    return medicine_service.detail(itemSeq)
