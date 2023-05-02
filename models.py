@@ -9,7 +9,7 @@ class User(db.Model):
     nickname = db.Column(db.String, nullable=False)
     gender = db.Column(db.String, nullable=False)
     birth = db.Column(db.String, nullable=False)
-    # profile = db.Column(db.String, nullable=False)
+    profile = db.Column(db.String, nullable=False)
 
     def serialize(self):
         return {
@@ -19,5 +19,5 @@ class User(db.Model):
             'nickname': self.nickname,
             'gender': self.gender,
             'birth': self.birth,
-            # 'profile': self.profile,
+            'profile': self.profile,
         }

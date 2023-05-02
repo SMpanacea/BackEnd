@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 # 다른 파일에 있는 클래스를 import하기 위해 경로 설정
 
 from service.user_service_imp import User_ServiceImp
-# user_service_imp.py에 있는 User_ServiceImp 클래스를 import
+from service.email_service import Email_Service
 
 user = Blueprint('user', __name__)  # Blueprint를 이용하면 controller처럼 사용할 수 있다. 
 
@@ -71,6 +71,6 @@ def email_check(): # 이메일 중복체크
 
 @user.route('/sendemail', methods=['POST'])
 def send_email(): # 이메일 인증번호 전송
-    user_service = User_ServiceImp()
+    email_check = Email_Service()
     jsonData = request.get_json()
-    return user_service.send_email(jsonData['email'])
+    return email_check.send_email(jsonData['email'])
