@@ -7,9 +7,9 @@ class User(db.Model):
     upw = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
     nickname = db.Column(db.String, nullable=False)
-    gender = db.Column(db.String, nullable=False)
-    birth = db.Column(db.String, nullable=False)
-    profile = db.Column(db.String, nullable=False)
+    gender = db.Column(db.String, nullable=True)
+    birth = db.Column(db.String, nullable=True)
+    profile = db.Column(db.String, nullable=True)
 
     def serialize(self):
         return {
