@@ -4,10 +4,6 @@ from abc import ABCMeta, abstractmethod
 class Medicine_Service(metaclass=ABCMeta):
 
     @abstractmethod
-    def list(self, pageNo, entpName, itemName, itemSeq, efcyQesitm):    # 약 목록 함수
-        pass
-
-    @abstractmethod
     def detail(self, itemSeq):  #상세보기 함수
         pass
 

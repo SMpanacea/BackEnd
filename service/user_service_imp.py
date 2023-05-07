@@ -14,8 +14,12 @@ from botocore.exceptions import ClientError
 # 키 값들을 가져오기 위해 사용
 import secret_key.config as config
 
+#토큰 생성을 위한 모듈
+from datetime import datetime as dt, timedelta
+import jwt
 
-class User_ServiceImp(User_Service):
+
+class User_Service_Imp(User_Service):
 
     def login(self, uid, upw):  #로그인 함수
         
@@ -30,9 +34,51 @@ class User_ServiceImp(User_Service):
         else:
             if  result: # 결과값이 존재한다면 로그인 성공
                 #사용자의 정보 반환(객체를 json으로 변환하여 반환 - 객체상태로는 반환 불가)
-                return jsonify(db.session.query(User).filter_by(uid = uid, upw = upw).first().serialize())
+                # return jsonify(db.session.query(User).filter_by(uid = uid, upw = upw).first().serialize())
+                token = self.generate_token(uid)
+                json_login = {
+                    "login" : "true",
+                    "token" : token
+                }
+                print(json_login)
+                return jsonify(json_login)
             else :   # 결과값이 존재하지 않는다면 로그인 실패
                 return "false"
+            
+
+    def generate_token(self, user_id):
+        print("토큰 생성")
+        payload = {
+            'user_id': user_id,
+            'exp': dt.utcnow() + timedelta(days=7),  # 토큰의 유효기간
+            'iat': dt.utcnow(),  # 토큰 발행 시간
+        }
+        secret_key = config.TOKEN_KEY  # 동적으로 생성된 시크릿 키
+        token = jwt.encode(payload, secret_key, algorithm='HS256')
+        print("토큰 생성 완료")
+        return token
+
+    def token_login(self, token):  # 토큰 로그인 함수
+        secret_key = config.TOKEN_KEY  # 정적 토큰 키
+        try:
+            payload = jwt.decode(token, secret_key, algorithms=['HS256'])
+            user_id = payload.get('user_id')
+            # 필요한 경우 user_id를 반환
+            return user_id
+        except jwt.ExpiredSignatureError:
+            # 토큰이 만료된 경우
+            json_login = {
+                    "user_id" : user_id,
+                    "token" : self.generate_token(user_id)
+                }
+            return json_login
+        except jwt.InvalidSignatureError:
+            # 서명이 잘못된 경우
+            return "false"
+        except Exception as e:
+            # 그 외 에러
+            print(e)
+            return "false"
 
     
 

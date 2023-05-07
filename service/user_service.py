@@ -7,6 +7,11 @@ class User_Service(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def token_login(self, token):   #토큰 로그인 함수
+        pass
+
+
+    @abstractmethod
     def logout(self):  #로그아웃 함수
         pass
 

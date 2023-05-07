@@ -4,15 +4,11 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from service.medicine_service import Medicine_Service
+from service.json_service_imp import Json_Service_Imp
 import secret_key.config as config
 import requests
 
 class Medicine_Service_Imp(Medicine_Service):
-
-    
-    def list(self, pageNo, entpName, itemName, itemSeq, efcyQesitm):
-        search_result = self.search(pageNo, entpName, itemName, itemSeq, efcyQesitm)
-        return search_result
 
     def detail(self, itemSeq):
         print(itemSeq)
@@ -20,7 +16,7 @@ class Medicine_Service_Imp(Medicine_Service):
         print(search_result)
         multi_result = self.multi_info(itemSeq)
         print(multi_result)
-        if self.is_json_key_present(multi_result["body"], "items"): # 병용 금기 정보가 있을 경우
+        if Json_Service_Imp.is_json_key_present(multi_result["body"], "items"): # 병용 금기 정보가 있을 경우
             detail_result = search_result["items"][0] + multi_result["body"]["items"]
         else:   # 병용 금기 정보가 없을 경우
             detail_result = search_result["items"][0]
@@ -76,11 +72,4 @@ class Medicine_Service_Imp(Medicine_Service):
         response = requests.get(config.multi_url, params=params)
         return response.json()
     
-    def is_json_key_present(self, json, key):
-        try:
-            buf = json[key]
-        except KeyError:
-            return False
-
-        return True
     

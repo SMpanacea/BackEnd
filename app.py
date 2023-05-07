@@ -34,8 +34,9 @@ app.register_blueprint(medicine, url_prefix="/medicine")
 app.register_blueprint(chat, url_prefix="/chat") 
 app.register_blueprint(barcode, url_prefix="/barcode") 
 
-# if __name__ == "__main__":
-# 	app.run(host='0.0.0.0', port=8080)
+# 로컬에서 실행하기 위한 코드 ($python app.py)
+if __name__ == "__main__":
+	app.run(host='0.0.0.0', port=5000)
 
 
 # model import 밑에 안하면 터져서 여기다가 import함

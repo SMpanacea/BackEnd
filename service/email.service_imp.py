@@ -11,7 +11,7 @@ from flask_mail import Mail, Message
 # 이메일 템플릿을 위한 모듈
 from flask import render_template
 
-class Email_ServiceImp(EmailService):
+class Email_Service_Imp(EmailService):
     def send_email(self, email):    #이메일 인증번호 전송 함수
         from app import mail    #app.py에서 생성한 mail 객체를 가져옴
         import random   #랜덤한 문자열을 생성하기 위해 사용

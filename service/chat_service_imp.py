@@ -9,7 +9,7 @@ import secret_key.config as config
 
 import openai
 
-class Chat_ServiceImp(Chat_Service):
+class Chat_Service_Imp(Chat_Service):
 
     """ messages=[
         {"role": "system", "content": "You are a helpful assistant."}, 시스템에게 역할을 부여
