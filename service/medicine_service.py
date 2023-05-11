@@ -15,3 +15,5 @@ class Medicine_Service(metaclass=ABCMeta):
     def multi_info(self, itemSeq): # 병용 금기 정보 통신 함수
         pass
 
+    def bookmark(self, bookmark): #즐겨찾기 함수
+        pass

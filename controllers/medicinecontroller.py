@@ -26,3 +26,8 @@ def detail():
     itemSeq = request.args.get("itemSeq", '')   # 품목기준코드
     return medicine_service.detail(itemSeq)
 
+@medicine.route('/bookmark', methods=['POST'])
+def bookmark():
+    jsonData = request.get_json()
+    bookmark = bookmark_schema.load(jsonData, partial=True)
+    return medicine_service.bookmark(bookmark)

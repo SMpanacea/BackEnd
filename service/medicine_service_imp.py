@@ -36,5 +36,41 @@ class Medicine_Service_Imp(Medicine_Service):
         return response.json()
     
 
- 
+    def bookmark(self, bookmark):   # 즐겨찾기 함수
+        try:
+            db.session.add(bookmark)
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            return 'false'
+        else:
+            return 'true'
+
+    def bookmark_off(self, bookmark):   # 즐겨찾기 해제 함수
+        try:
+            BookMark.query.filter_by(uid=bookmark.uid , itemSeq=bookmark.itemSeq).delete()
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            return 'false'
+        else:
+            return 'true'
+        
+    def bookmark_list(self, bookmark):   # 즐겨찾기 리스트 함수
+        try:
+            result = BookMark.query.filter_by(uid=bookmark.uid).all()
+        except Exception as e:
+            print(e)
+            return 'false'
+        else:
+            return jsonify(result)
+    
+
+
+
+
+
+
+
+
     
