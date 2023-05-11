@@ -8,15 +8,10 @@ class Medicine_Service(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def search(self, pageNo, entpName, itemName, itemSeq, efcyQesitm):  # 약 정보 통신 함수
-        pass
-
-    @abstractmethod
-    def dur_info(self, itemSeq):    # dur 정보 통신 함수
+    def search(self, medicine):  # 약 정보 통신 함수
         pass
 
     @abstractmethod
     def multi_info(self, itemSeq): # 병용 금기 정보 통신 함수
         pass
 
-    

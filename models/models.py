@@ -21,3 +21,12 @@ class User(db.Model):
             'birth': self.birth,
             'profile': self.profile,
         }
+    
+class BookMark(db.Model):
+    __tablename__ = "bookmarks"
+    uid = db.Column(db.String,db.ForeignKey('users.uid'), primary_key=True)
+    itemSeq = db.Column(db.String, primary_key=True)
+    itemName = db.Column(db.String, nullable=False)
+    itemImage = db.Column(db.String, nullable=False)
+    updateDe = db.Column(db.String, nullable=False)
+

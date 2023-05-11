@@ -6,7 +6,7 @@ from controllers.medicinecontroller import medicine
 from controllers.chatcontroller import chat
 from controllers.barcodecontroller import barcode
 import secret_key.config as config
-from models import db
+from models.models import db
 
 app = Flask(__name__)
 
@@ -40,4 +40,4 @@ if __name__ == "__main__":
 
 
 # model import 밑에 안하면 터져서 여기다가 import함
-import models
+import models.models
