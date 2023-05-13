@@ -11,15 +11,11 @@ class User_Service(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def logout(self):  #로그아웃 함수
+    def update(self, user):  #회원정보 추가 및 수정 함수
         pass
 
     @abstractmethod
-    def register(self, user):  #회원가입 함수
-        pass
-
-    @abstractmethod
-    def withdrawal(self, user):  #회원탈퇴 함수
+    def withdrawal(self, token):  #회원탈퇴 함수
         pass
 
     @abstractmethod

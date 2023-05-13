@@ -138,3 +138,14 @@ class Multi_Info:
             'end_change_date': self.end_change_date,
             'itemSeq': self.itemSeq
         }
+    
+class UserToken:
+    def __init__(self, uid = '', token = ''):
+        self.uid = uid
+        self.token = token
+
+    def get_params(self):
+        return {
+            'uid': self.uid,
+            'token': self.token
+        }

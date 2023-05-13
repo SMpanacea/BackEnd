@@ -10,6 +10,8 @@ from service.medicine_service_imp import Medicine_Service_Imp
 from models.schemas import Medicine
 from models.schemas import BookMark
 
+# from aimodel.PillMain import PillMain
+
 
 medicine = Blueprint('medicine', __name__)  # Blueprint를 이용하면 controller처럼 사용할 수 있다. 
 
@@ -31,3 +33,11 @@ def bookmark():
     jsonData = request.get_json()
     bookmark = bookmark_schema.load(jsonData, partial=True)
     return medicine_service.bookmark(bookmark)
+
+
+# @medicine.route('/image', methods=['POST'])
+# def image(): 
+#     pillMain = PillMain()
+#     result = []
+#     result = pillMain.main(request.files['image1'], request.files['image2'])
+#     return medicine_service.camera_search(result)

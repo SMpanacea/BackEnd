@@ -7,6 +7,8 @@ from models.models import db
 from models.models import User
 from flask import jsonify   #json 형태로 데이터를 반환하기 위해 사용
 
+from service.token_service_imp import Token_Service_Imp
+
 
 #aws s3 사용을 위한 모듈
 import boto3   
@@ -18,6 +20,7 @@ import secret_key.config as config
 from datetime import datetime as dt, timedelta
 import jwt
 
+token_service = Token_Service_Imp()
 
 class User_Service_Imp(User_Service):
 
@@ -30,56 +33,21 @@ class User_Service_Imp(User_Service):
             return 'false'
         else:
             if  result: # 결과값이 존재한다면 로그인 성공
-                token = self.generate_token(user.uid)   # 토큰 생성
-                json_login = {
-                    "login" : "true",
-                    "token" : token
-                }
-                #사용자의 정보 반환(객체를 json으로 변환하여 반환 - 객체상태로는 반환 불가)
-                return json_login
+                token = token_service.generate_token(user.uid)   # 토큰 생성
+                return token
             else :   # 결과값이 존재하지 않는다면 로그인 실패
                 return "false"
-            
 
-    def generate_token(self, user_id):  # 토큰 생성 함수
-        payload = {
-            'user_id': user_id,
-            'exp': dt.utcnow() + timedelta(days=7),  # 토큰의 유효기간
-            'iat': dt.utcnow(),  # 토큰 발행 시간
-        }
-        secret_key = config.TOKEN_KEY 
-        token = jwt.encode(payload, secret_key, algorithm='HS256')  # 토큰 생성
-        return token
 
     def token_login(self, token):  # 토큰 로그인 함수
-        secret_key = config.TOKEN_KEY 
-        try:
-            payload = jwt.decode(token, secret_key, algorithms=['HS256'])
-            user_id = payload.get('user_id')
-            # 필요한 경우 user_id를 반환
-            return user_id
-        except jwt.ExpiredSignatureError:
-            # 토큰이 만료된 경우
-            json_login = {
-                    "user_id" : user_id,
-                    "token" : self.generate_token(user_id)
-                }
-            return json_login
-        except jwt.InvalidSignatureError:
-            # 서명이 잘못된 경우
+        user_data = token_service.validate_token(token)
+        if user_data == "false":
             return "false"
-        except Exception as e:
-            # 그 외 에러
-            print(e)
-            return "false"
-
-    
-
-    def logout(self):
-        return 'logout'
+        else:   
+            return user_data
 
 
-    def register(self, user): #회원가입 함수
+    def update(self, user): #회원정보 추가 및 수정 함수
         try:  #try catch문을 사용하여 데이터 저장
             #데이터 저장
             db.session.add(user)
@@ -92,10 +60,14 @@ class User_Service_Imp(User_Service):
             return 'true'  #데이터 저장이 성공한 경우 true 반환
         
         
-    def withdrawal(self, user):  #회원탈퇴 함수
+    def withdrawal(self, token):  #회원탈퇴 함수
         try:
-            User.query.filter_by(uid = user.uid).delete()
-            db.session.commit()
+            usertoken = token_service.get_id(token) #토큰에서 아이디 추출
+            if usertoken == "false":    #토큰이 유효하지 않은 경우
+                return "false"
+            else:   #토큰이 유효한 경우
+                User.query.filter_by(uid = usertoken.id).delete()
+                db.session.commit()
         except Exception as e:
             print(e)
             return 'false'
@@ -126,6 +98,7 @@ class User_Service_Imp(User_Service):
                 return jsonify(result.uid)
             else:
                 return 'true'
+            
     
     # def info(self, key, value): #회원정보 조회 함수
     #     try:

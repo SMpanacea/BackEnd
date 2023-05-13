@@ -65,6 +65,13 @@ class Medicine_Service_Imp(Medicine_Service):
         else:
             return jsonify(result)
     
+    def camera_search(self, list):
+        result = []
+        for item in list:
+            medicine = Medicine(itemSeq=item["code"], numOfRows=1)
+            response = requests.get(config.url, params=medicine.get_params())
+            result.append(response.json()["body"])
+            return result
 
 
 

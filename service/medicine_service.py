@@ -4,16 +4,29 @@ from abc import ABCMeta, abstractmethod
 class Medicine_Service(metaclass=ABCMeta):
 
     @abstractmethod
-    def detail(self, itemSeq):  #상세보기 함수
+    def search(self, medicine):  # 약 정보 통신 함수
         pass
 
     @abstractmethod
-    def search(self, medicine):  # 약 정보 통신 함수
+    def detail(self, itemSeq):  #상세보기 함수
         pass
 
     @abstractmethod
     def multi_info(self, itemSeq): # 병용 금기 정보 통신 함수
         pass
 
+    @abstractmethod
     def bookmark(self, bookmark): #즐겨찾기 함수
+        pass
+    
+    @abstractmethod
+    def bookmark_off(self, bookmark):   # 즐겨찾기 해제 함수
+        pass
+
+    @abstractmethod
+    def bookmark_list(self, bookmark):   # 즐겨찾기 리스트 함수
+        pass
+
+    @abstractmethod
+    def camera_search(self, list):
         pass

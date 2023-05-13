@@ -34,22 +34,20 @@ def token_login():    # 토큰 로그인
 def register(): # 회원가입
     jsonData = request.get_json()
     user = user_schema.load(jsonData, partial=True) # 받아온 데이터를 user 형태로 자동 매핑
-    return user_service.register(user)
+    return user_service.update(user)
 
 
 @user.route('/withdrawal', methods=['POST']) #post 방식만 잡아서 처리한다.
 def withdrawal():   # 회원탈퇴
     jsonData = request.get_json()
-    user = user_schema.load(jsonData, partial=True) # 받아온 데이터를 user 형태로 자동 매핑
-    return user_service.withdrawal(user)
+    return user_service.withdrawal(jsonData['token'])
 
 
 @user.route('/update', methods=['POST']) #post 방식만 잡아서 처리한다.
 def user_update():   # 회원정보 수정
     jsonData = request.get_json()
     user = user_schema.load(jsonData, partial=True)
-    # return user_service.update(user)
-    return user_service.register(user)  # 회원가입과 동일한 함수를 사용한다.(회원정보 수정은 회원가입과 동일한 로직을 사용한다.)
+    return user_service.update(user) 
 
 
 @user.route('/idcheck', methods=['POST'])
