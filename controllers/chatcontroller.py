@@ -13,4 +13,5 @@ chat = Blueprint('chat', __name__)  # Blueprint를 이용하면 controller처럼
 def chatgpt():
     chat_service = Chat_Service_Imp()
     jsonData = request.get_json()
-    return chat_service.chat(jsonData['content'])
+    print(jsonData)
+    return chat_service.chat(jsonData)

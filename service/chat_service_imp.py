@@ -19,14 +19,16 @@ class Chat_Service_Imp(Chat_Service):
     ] """
 
     def chat(self, content):  # 채팅 함수
-
+        print(content)
+        message = []
         openai.api_key = config.GPT_KEY
 
         completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": f"{content}"}
-        ]
+        # messages=[
+        #     {"role": "user", "content": f"{content}"}
+        # ]
+        messages = content  # 사용자의 메세지를 받아온다.
         )
 
         return completion.choices[0].message["content"].strip()

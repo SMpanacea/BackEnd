@@ -10,6 +10,7 @@ import requests
 from models.schemas import Medicine, Multi_Info
 from models.models import db, BookMark
 from flask import jsonify 
+import re
 
 class Medicine_Service_Imp(Medicine_Service):
 
@@ -25,9 +26,10 @@ class Medicine_Service_Imp(Medicine_Service):
         multi_result = self.multi_info(itemSeq)
         json_service = Json_Service_Imp()
         if json_service.json_key_check(multi_result["body"], "items"): # 병용 금기 정보가 있을 경우
-            detail_result = search_result["items"][0] + multi_result["body"]["items"]
+            detail_result = (self.remove_tags(search_result["items"][0])
+                            + self.remove_tags(multi_result["body"]["items"]))
         else:   # 병용 금기 정보가 없을 경우
-            detail_result = search_result["items"][0]
+            detail_result = self.remove_tags(search_result["items"][0])
         return detail_result
 
 
@@ -44,6 +46,7 @@ class Medicine_Service_Imp(Medicine_Service):
             print(e)
             return 'false'
         else:
+            self.bookmark_list(bookmark)
             return 'true'
 
     def bookmark_off(self, bookmark):   # 즐겨찾기 해제 함수
@@ -73,6 +76,15 @@ class Medicine_Service_Imp(Medicine_Service):
             result.append(response.json()["body"])
             return result
 
+    def remove_tags(self, data):
+        # HTML 태그를 제거하는 정규식 패턴
+        cleanr = re.compile('<.*?>')
+        # 정규식 패턴에 매칭되는 모든 문자열을 빈 문자열로 치환
+        for key in data:
+            if data[key] is None:
+                continue
+            data[key] = re.sub(cleanr, '', data[key])
+        return data
 
 
 

@@ -28,5 +28,5 @@ class Medicine_Service(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def camera_search(self, list):
+    def camera_search(self, list):  #카메라 검색 함수
         pass

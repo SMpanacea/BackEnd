@@ -12,11 +12,14 @@ from models.schemas import BookMark
 
 # from aimodel.PillMain import PillMain
 
+from service.token_service_imp import Token_Service_Imp
+
 
 medicine = Blueprint('medicine', __name__)  # Blueprint를 이용하면 controller처럼 사용할 수 있다. 
 
 medicine_service = Medicine_Service_Imp()
 bookmark_schema = BookMark()
+token_service = Token_Service_Imp()
 
 @medicine.route('/search', methods=['GET']) #get 방식만 잡아서 처리한다.
 def search():
@@ -32,7 +35,12 @@ def detail():
 def bookmark():
     jsonData = request.get_json()
     bookmark = bookmark_schema.load(jsonData, partial=True)
-    return medicine_service.bookmark(bookmark)
+    usertoken = token_service.get_id(jsonData["token"])
+    if usertoken == "false":
+        return "false"
+    else:
+        bookmark.user_id = usertoken.id
+        return medicine_service.bookmark(bookmark)
 
 
 # @medicine.route('/image', methods=['POST'])
