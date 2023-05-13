@@ -27,6 +27,7 @@ class UserSchema(SQLAlchemyAutoSchema):
     birth = auto_field()
     profile = auto_field()
 
+
 class BookMarkSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = BookMark

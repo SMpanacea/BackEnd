@@ -46,8 +46,7 @@ class Medicine_Service_Imp(Medicine_Service):
             print(e)
             return 'false'
         else:
-            self.bookmark_list(bookmark)
-            return 'true'
+            return self.bookmark_list(bookmark)
 
     def bookmark_off(self, bookmark):   # 즐겨찾기 해제 함수
         try:
@@ -57,7 +56,7 @@ class Medicine_Service_Imp(Medicine_Service):
             print(e)
             return 'false'
         else:
-            return 'true'
+            return self.bookmark_list(bookmark)
         
     def bookmark_list(self, bookmark):   # 즐겨찾기 리스트 함수
         try:
@@ -66,7 +65,10 @@ class Medicine_Service_Imp(Medicine_Service):
             print(e)
             return 'false'
         else:
-            return jsonify(result)
+            list = []
+            for bookmark_one in result:
+                list.append(bookmark_one.__dict__["itemSeq"])
+            return jsonify(list)
     
     def camera_search(self, list):
         result = []

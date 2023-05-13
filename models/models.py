@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import secret_key.config as config
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
@@ -9,12 +14,11 @@ class User(db.Model):
     nickname = db.Column(db.String, nullable=False)
     gender = db.Column(db.String, nullable=True)
     birth = db.Column(db.String, nullable=True)
-    profile = db.Column(db.String, nullable=True)
+    profile = db.Column(db.String, nullable=True, default=config.IMAGE_URL+"default/default_profile.jpg")
 
     def serialize(self):
         return {
             'uid': self.uid,
-            'upw': self.upw,
             'email': self.email,
             'nickname': self.nickname,
             'gender': self.gender,
@@ -27,6 +31,6 @@ class BookMark(db.Model):
     uid = db.Column(db.String,db.ForeignKey('users.uid'), primary_key=True)
     itemSeq = db.Column(db.String, primary_key=True)
     itemName = db.Column(db.String, nullable=False)
-    itemImage = db.Column(db.String, nullable=False)
-    updateDe = db.Column(db.String, nullable=False)
+    itemImage = db.Column(db.String, nullable=True, default=config.IMAGE_URL+"default/medicine_default.jpg")
+    updateDe = db.Column(db.String, nullable=True)
 

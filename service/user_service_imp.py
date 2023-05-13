@@ -16,6 +16,9 @@ from botocore.exceptions import ClientError
 # 키 값들을 가져오기 위해 사용
 import secret_key.config as config
 
+import datetime
+import time
+
 #토큰 생성을 위한 모듈
 from datetime import datetime as dt, timedelta
 import jwt
@@ -97,17 +100,59 @@ class User_Service_Imp(User_Service):
             if result:
                 return jsonify(result.uid)
             else:
-                return 'true'
+                return 'false'
             
-    
-    # def info(self, key, value): #회원정보 조회 함수
-    #     try:
-    #         result = db.session.query(User).filter_by(**{key: value}).all()
-    #     except Exception as e:
-    #         return 'false'
-    #     else:
-    #         if result: #결과값이 존재한다면 
-    #             return jsonify(result[0].serialize())
-    #         else:   #결과값이 존재하지 않는다면 
-    #             return 'true'
+    def find_pw(self, user):
+        try:
+            result = User.query.filter_by(uid = user.uid, email = user.email).first()
+        except Exception as e:
+            print(e)
+            return 'false'
+        else:
+            if result:
+                return "true"
+            else:
+                return 'false'
+            
+    def image_upload(self, image_file, user):
+        # S3 서비스를 사용하기 위한 리소스 객체 생성
+        s3 = boto3.resource('s3')
+        # 현재 날짜를 구합니다.
+        now = datetime.datetime.now()
+        year_str = now.strftime('%Y')
+        month_str = now.strftime('%m')
+        day_str = now.strftime('%d')
 
+        # 오늘 날짜에 해당하는 폴더가 없으면 생성합니다.
+        bucket = s3.Bucket(config.bucket_name)
+        bucket.put_object(Key=f'{year_str}/{month_str}/{day_str}/')
+
+        for file in image_file:
+            # 파일 이름 지정
+            filename = file.filename
+
+            # S3 객체 이름 지정
+            object_name = os.path.splitext(filename)[0] + '_' + str(time.time()) + os.path.splitext(filename)[1]
+
+            # 파일을 S3 버킷에 업로드합니다.
+            file_content = file
+            object_key = f'{year_str}/{month_str}/{day_str}/{object_name}'
+            bucket.upload_fileobj(file_content, object_key)
+
+        return 'File uploaded successfully'
+    
+    
+    def info(self, token): #회원정보 조회 함수
+        try:
+            usertoken = token_service.get_id(token) #토큰에서 아이디 추출
+            if usertoken == "false":    #토큰이 유효하지 않은 경우
+                return "false"
+            else:   #토큰이 유효한 경우
+                result = User.query.filter_by(uid = usertoken.uid).first()
+        except Exception as e:
+            return 'false'
+        else:
+            if result: #결과값이 존재한다면 
+                return result.serialize()
+            else:   #결과값이 존재하지 않는다면 
+                return 'false'

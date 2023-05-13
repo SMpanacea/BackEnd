@@ -26,6 +26,10 @@ class User_Service(metaclass=ABCMeta):
     def find_id(self, user):  #아이디 찾기 함수
         pass
 
-    # @abstractmethod
-    # def info(self, uid): #회원정보 조회 함수
-    #     pass
+    @abstractmethod
+    def find_pw(self, user):  #비밀번호 찾기 함수
+        pass
+
+    @abstractmethod
+    def info(self, uid): #회원정보 조회 함수
+        pass

@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from service.user_service_imp import User_Service_Imp
 from service.email_service import Email_Service
+from service.json_service_imp import Json_Service_Imp
 
 from models.schemas import UserSchema
 
@@ -16,6 +17,7 @@ user = Blueprint('user', __name__)  # Blueprint를 이용하면 controller처럼
 
 user_schema = UserSchema()
 user_service = User_Service_Imp()
+json_service = Json_Service_Imp()
 
 @user.route('/login', methods=['POST']) #post 방식만 잡아서 처리한다.
 def login():    # 로그인
@@ -47,6 +49,8 @@ def withdrawal():   # 회원탈퇴
 def user_update():   # 회원정보 수정
     jsonData = request.get_json()
     user = user_schema.load(jsonData, partial=True)
+    if json_service.check_image(request) == "true":
+        user = user_service.image_upload(request.files.getlist("image"), user)
     return user_service.update(user) 
 
 
@@ -80,3 +84,15 @@ def find_id(): # 아이디 찾기
     jsonData = request.get_json()
     user = user_schema.load(jsonData, partial=True)
     return user_service.find_id(user) 
+
+@user.route('/findpw', methods=['POST'])
+def find_pw(): # 비밀번호 찾기
+    jsonData = request.get_json()
+    user = user_schema.load(jsonData, partial=True)
+    return user_service.find_pw(user)
+
+
+@user.route('/info', methods=['POST'])
+def user_info(): # 회원정보 조회
+    jsonData = request.get_json()
+    return user_service.info(jsonData['token'])

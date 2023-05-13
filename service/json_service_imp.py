@@ -10,3 +10,10 @@ class Json_Service_Imp(Json_Service):
             return False
         # key가 존재할 경우
         return True
+    
+    def check_image(self, request):
+        image_files = request.files.getlist("image")
+        if not image_files:
+            return "false"
+        else:
+            return "true"

@@ -43,13 +43,13 @@ class Token_Service_Imp(Token_Service):
     def get_id(self, token):    # 토큰에서 아이디를 가져오는 함수
         try:
             user_data = self.validate_token(token)
-            if user_data.length > 15:    # 토큰이 넘어온 경우
-                usertoken = UserToken(id=self.validate_token(user_data), token=user_data)
+            if len(user_data) > 15:    # 토큰이 넘어온 경우
+                usertoken = UserToken(uid=self.validate_token(user_data), token=user_data)
                 return usertoken
             elif user_data == "false":   # 토큰이 잘못된 경우
                 return "false"
             else:   # 아이디가 넘어온 경우
-                usertoken = UserToken(id=self.validate_token(user_data))
+                usertoken = UserToken(uid=user_data, token=token)
                 return usertoken
         except Exception as e:
             print(e)
