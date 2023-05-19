@@ -7,6 +7,7 @@ from controllers.chatcontroller import chat
 from controllers.barcodecontroller import barcode
 import secret_key.config as config
 from models.models import db
+from flask_mail import Mail
 
 app = Flask(__name__)
 
@@ -21,6 +22,16 @@ app.config.from_mapping(
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SQLAlchemy_ECHO=True
 )
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = config.MAIL_USERNAME
+app.config['MAIL_PASSWORD'] = config.MAIL_PASSWORD
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+
+mail = Mail(app)
 
 db.init_app(app)
 Migrate(app,db)

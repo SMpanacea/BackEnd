@@ -16,8 +16,6 @@ class Medicine_Service_Imp(Medicine_Service):
 
     def search(self, medicine):  # 약 정보 통신 함수
         response = requests.get(config.url, params=medicine.get_params())
-        print (response.json())
-        print(medicine.get_params())
         return response.json()["body"]
 
 

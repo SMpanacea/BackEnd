@@ -19,24 +19,28 @@ import secret_key.config as config
 import datetime
 import time
 
-#토큰 생성을 위한 모듈
-from datetime import datetime as dt, timedelta
-import jwt
+import io
+import base64
+
+
+from sqlalchemy import select, and_
+
 
 token_service = Token_Service_Imp()
 
 class User_Service_Imp(User_Service):
 
-    def login(self, user):  #로그인 함수
+    def login(self, id, pw):  #로그인 함수
         try:
+            print(id, pw)
             # 아이디와 비밀번호가 일치한 값의 검색 결과가 나오는지 확인
-            result = User.query.filter_by(uid = user.uid, upw = user.upw).all()
+            result = User.query.filter_by(uid = id, upw = pw).first()
         except Exception as e:
             print(e)
             return 'false'
         else:
             if  result: # 결과값이 존재한다면 로그인 성공
-                token = token_service.generate_token(user.uid)   # 토큰 생성
+                token = token_service.generate_token(result.uid)   # 토큰 생성
                 return token
             else :   # 결과값이 존재하지 않는다면 로그인 실패
                 return "false"
@@ -47,7 +51,7 @@ class User_Service_Imp(User_Service):
         if user_data == "false":
             return "false"
         else:   
-            return user_data
+            return 'true'
 
 
     def update(self, user): #회원정보 추가 및 수정 함수
@@ -60,7 +64,7 @@ class User_Service_Imp(User_Service):
             print(e)
             return 'false'  # 데이터 저장이 실패한 경우 false 반환
         else:
-            return 'true'  #데이터 저장이 성공한 경우 true 반환
+            return self.info(user.uid)  #데이터 저장이 성공한 경우 회원정보 반환
         
         
     def withdrawal(self, token):  #회원탈퇴 함수
@@ -69,7 +73,7 @@ class User_Service_Imp(User_Service):
             if usertoken == "false":    #토큰이 유효하지 않은 경우
                 return "false"
             else:   #토큰이 유효한 경우
-                User.query.filter_by(uid = usertoken.id).delete()
+                User.query.filter_by(uid = usertoken.uid).delete()
                 db.session.commit()
         except Exception as e:
             print(e)
@@ -102,6 +106,7 @@ class User_Service_Imp(User_Service):
             else:
                 return 'false'
             
+
     def find_pw(self, user):
         try:
             result = User.query.filter_by(uid = user.uid, email = user.email).first()
@@ -114,9 +119,17 @@ class User_Service_Imp(User_Service):
             else:
                 return 'false'
             
-    def image_upload(self, image_file, user):
+
+    def image_upload(self, base64_image_data):
         # S3 서비스를 사용하기 위한 리소스 객체 생성
-        s3 = boto3.resource('s3')
+        with open('base64_image_data.txt', 'w') as file:
+            file.write(base64_image_data)
+        s3 = boto3.resource(
+            's3',
+            aws_access_key_id=config.AWS_ACCESS_KEY,
+            aws_secret_access_key=config.AWS_SECRET_KEY,
+            region_name=config.AWS_REGION
+                            )
         # 현재 날짜를 구합니다.
         now = datetime.datetime.now()
         year_str = now.strftime('%Y')
@@ -127,28 +140,56 @@ class User_Service_Imp(User_Service):
         bucket = s3.Bucket(config.bucket_name)
         bucket.put_object(Key=f'{year_str}/{month_str}/{day_str}/')
 
-        for file in image_file:
-            # 파일 이름 지정
-            filename = file.filename
+        # 파일이름 지정.
+        file_ext = os.path.splitext(base64_image_data[:50])[-1] or '.png'
+        filename = 'image_' + str(time.time()) + file_ext
 
-            # S3 객체 이름 지정
-            object_name = os.path.splitext(filename)[0] + '_' + str(time.time()) + os.path.splitext(filename)[1]
 
-            # 파일을 S3 버킷에 업로드합니다.
-            file_content = file
-            object_key = f'{year_str}/{month_str}/{day_str}/{object_name}'
-            bucket.upload_fileobj(file_content, object_key)
+        # S3 객체 이름 지정
+        object_name = os.path.splitext(filename)[0] + '_' + str(time.time()) + os.path.splitext(filename)[1]
 
-        return 'File uploaded successfully'
+        # 디코딩된 이미지 데이터를 BytesIO 객체로 변환합니다.
+        encoded_image_data = base64_image_data.split(",")[-1]
+        decoded_image_data = base64.b64decode(encoded_image_data)
+        image_data = io.BytesIO(decoded_image_data)
+
+        # 파일을 S3 버킷에 업로드합니다.
+        object_key = f'{year_str}/{month_str}/{day_str}/{object_name}'
+        bucket.upload_fileobj(image_data, object_key)
+
+        # 업로드된 객체의 URL을 생성합니다.
+        url = bucket.meta.client.generate_presigned_url('get_object', Params={'Bucket': config.bucket_name, 'Key': object_key}, ExpiresIn=3600)
+
+        return url # 파일 업로드된 객체 URI 반환합니다.
     
-    
-    def info(self, token): #회원정보 조회 함수
+    def delete_image(self, user):
+        # user.profile에 있는 이미지 주소
+        image_path = user.profile
+
+        # 이미지 파일 이름 추출 (object_key)
+        filename = image_path.split('/')[-1]
+
+        s3 = boto3.resource(
+            's3',
+            aws_access_key_id=config.AWS_ACCESS_KEY,
+            aws_secret_access_key=config.AWS_SECRET_KEY,
+            region_name=config.AWS_REGION
+            )
+
+        # 지정된 버킷 이름
+        bucket_name = config.bucket_name
+
         try:
-            usertoken = token_service.get_id(token) #토큰에서 아이디 추출
-            if usertoken == "false":    #토큰이 유효하지 않은 경우
-                return "false"
-            else:   #토큰이 유효한 경우
-                result = User.query.filter_by(uid = usertoken.uid).first()
+            # S3 버킷에서 지정된 파일 삭제
+            s3.Object(bucket_name, filename).delete()
+            print(f"{filename} Successfully deleted from S3")
+        except Exception as e:
+            print(f"Error deleting {filename} from S3: {e}")
+    
+    
+    def info(self, uid): #회원정보 조회 함수
+        try:
+            result = User.query.filter_by(uid = uid).first()
         except Exception as e:
             return 'false'
         else:

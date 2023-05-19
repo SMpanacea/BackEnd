@@ -14,6 +14,26 @@ from models.schemas import BookMarkSchema
 
 from service.token_service_imp import Token_Service_Imp
 
+from service.json_service_imp import Json_Service_Imp
+
+
+
+import boto3   
+from botocore.exceptions import ClientError 
+# 키 값들을 가져오기 위해 사용
+import secret_key.config as config
+
+import datetime
+import time
+
+import io
+import base64
+from PIL import Image
+import json
+
+
+
+
 
 medicine = Blueprint('medicine', __name__)  # Blueprint를 이용하면 controller처럼 사용할 수 있다. 
 
@@ -65,9 +85,3 @@ def bookmark_list():
         return medicine_service.bookmark_list(bookmark)
 
 
-# @medicine.route('/image', methods=['POST'])
-# def image(): 
-#     pillMain = PillMain()
-#     result = []
-#     result = pillMain.main(request.files['image1'], request.files['image2'])
-#     return medicine_service.camera_search(result)
