@@ -91,7 +91,7 @@ class Barcode_Service_IMP(Barcode_Service):
             result_list.append(entpName)
 
             itemImage = driver.find_element(By.CSS_SELECTOR, "div.explan_right img").get_attribute("src")
-            # result_list.append(itemImage)
+            result_list.append(itemImage)
 
             efcyQesitm = driver.find_element(By.ID, "_ee_doc1").text
             result_list.append(efcyQesitm)
