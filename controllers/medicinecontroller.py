@@ -30,6 +30,7 @@ import io
 import base64
 from PIL import Image
 import json
+from aimodel.PillMain import PillMain
 
 
 
@@ -83,5 +84,32 @@ def bookmark_list():
     else:
         bookmark.uid = usertoken.uid
         return medicine_service.bookmark_list(bookmark)
+    
+@medicine.route('/bookmarkall', methods=['POST'])
+def bookmark_all():
+    jsonData = request.get_json()
+    bookmark = bookmark_schema.load(jsonData, partial=True)
+    usertoken = token_service.get_id(jsonData["token"])
+    if usertoken == "false":
+        return "false"
+    else:
+        bookmark.uid = usertoken.uid
+        return medicine_service.bookmark_all(bookmark)
 
+@medicine.route('/image', methods=['POST'])
+def image_upload():
+        
+        jsonData = request.get_json()
+        front = jsonData["front"]
+        back = jsonData["back"]
 
+        front_decoded_image_data = base64.b64decode(front)
+        front_image_data = io.BytesIO(front_decoded_image_data)
+
+        back_decoded_image_data = base64.b64decode(back)
+        back_image_data = io.BytesIO(back_decoded_image_data)
+
+        pillMain = PillMain()
+        result = []
+        result = pillMain.main(front_image_data, back_image_data)
+        return medicine_service.camera_search(result)

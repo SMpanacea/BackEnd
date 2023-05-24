@@ -9,9 +9,9 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = "users"
     uid = db.Column(db.String, primary_key=True)
-    upw = db.Column(db.String, nullable=False)
+    upw = db.Column(db.String, nullable=True)
     email = db.Column(db.String, nullable=False)
-    nickname = db.Column(db.String, nullable=False)
+    nickname = db.Column(db.String, nullable=True)
     gender = db.Column(db.String, nullable=True)
     birth = db.Column(db.String, nullable=True)
     profile = db.Column(db.String, nullable=True, default=config.IMAGE_URL+"default/default_profile.jpg")
@@ -33,4 +33,13 @@ class BookMark(db.Model):
     itemName = db.Column(db.String, nullable=False)
     itemImage = db.Column(db.String, nullable=True, default=config.IMAGE_URL+"default/medicine_default.jpg")
     updateDe = db.Column(db.String, nullable=True)
+
+    def serialize(self):
+        return {
+            'uid': self.uid,
+            'itemSeq': self.itemSeq,
+            'itemName': self.itemName,
+            'itemImage': self.itemImage,
+            'updateDe': self.updateDe,
+        }
 

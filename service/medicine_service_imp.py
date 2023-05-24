@@ -3,6 +3,7 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import json
 from service.medicine_service import Medicine_Service
 from service.json_service_imp import Json_Service_Imp
 import secret_key.config as config
@@ -16,6 +17,7 @@ class Medicine_Service_Imp(Medicine_Service):
 
     def search(self, medicine):  # 약 정보 통신 함수
         response = requests.get(config.url, params=medicine.get_params())
+        print(response.json())
         return response.json()["body"]
 
 
@@ -67,6 +69,21 @@ class Medicine_Service_Imp(Medicine_Service):
             for bookmark_one in result:
                 list.append(bookmark_one.__dict__["itemSeq"])
             return jsonify(list)
+        
+    def bookmark_all(self, bookmark):
+        try:
+            result = BookMark.query.filter_by(uid=bookmark.uid).all()
+        except Exception as e:
+            print(e)
+            return 'false'
+        else:
+            booklist = []
+            print(result)
+            for bookmark_one in result:
+                booklist.append(bookmark_one.serialize())
+            print(booklist)
+            print([bookmark.serialize() for bookmark in result])
+            return  booklist
     
     def camera_search(self, list):
         result = []
@@ -75,7 +92,6 @@ class Medicine_Service_Imp(Medicine_Service):
             response = requests.get(config.url, params=medicine.get_params())
             result.append(response.json()["body"])
             return result
-
     def remove_tags(self, data):
         # HTML 태그를 제거하는 정규식 패턴
         cleanr = re.compile('<.*?>')

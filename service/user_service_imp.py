@@ -44,6 +44,26 @@ class User_Service_Imp(User_Service):
                 return token
             else :   # 결과값이 존재하지 않는다면 로그인 실패
                 return "false"
+            
+    def easylogin(self, user):
+        user_id = user.uid
+        try:
+            result = User.query.filter_by(uid = user_id).first()
+        except Exception as e:
+            print(e)
+            return 'false'
+        else:
+            if result:
+                token = token_service.generate_token(result.uid)
+                print("token",token)
+                return token
+            elif result == None:
+                self.update(user)
+                token = token_service.generate_token(user_id)
+                print("...?",token)
+                return token
+            else: 
+                return 'false'
 
 
     def token_login(self, token):  # 토큰 로그인 함수
@@ -70,9 +90,12 @@ class User_Service_Imp(User_Service):
     def withdrawal(self, token):  #회원탈퇴 함수
         try:
             usertoken = token_service.get_id(token) #토큰에서 아이디 추출
+            print("탈퇴",usertoken.uid)
             if usertoken == "false":    #토큰이 유효하지 않은 경우
+                print("탈퇴 함수중 토큰이 유효하지 않음")
                 return "false"
             else:   #토큰이 유효한 경우
+                print("삭제 드가자~")
                 User.query.filter_by(uid = usertoken.uid).delete()
                 db.session.commit()
         except Exception as e:
@@ -122,8 +145,6 @@ class User_Service_Imp(User_Service):
 
     def image_upload(self, base64_image_data):
         # S3 서비스를 사용하기 위한 리소스 객체 생성
-        with open('base64_image_data.txt', 'w') as file:
-            file.write(base64_image_data)
         s3 = boto3.resource(
             's3',
             aws_access_key_id=config.AWS_ACCESS_KEY,
@@ -190,7 +211,10 @@ class User_Service_Imp(User_Service):
     def info(self, uid): #회원정보 조회 함수
         try:
             result = User.query.filter_by(uid = uid).first()
+            print("객체임!",result)
+            print("그래서 아이디는",result.uid)
         except Exception as e:
+            print(e)
             return 'false'
         else:
             if result: #결과값이 존재한다면 

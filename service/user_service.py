@@ -7,6 +7,10 @@ class User_Service(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def easylogin(self, user):  #간편로그인 함수
+        pass
+
+    @abstractmethod
     def token_login(self, token):   #토큰 로그인 함수
         pass
 

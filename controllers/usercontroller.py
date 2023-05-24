@@ -26,6 +26,12 @@ def login():    # 로그인
     jsonData = request.get_json()   # 클라이언트가 보낸 json 데이터를 받아온다.
     return user_service.login(jsonData["uid"], jsonData["upw"]) # 받아온 데이터에서 uid와 upw를 추출하여 login 함수에 넣고 결과값 반환
 
+@user.route("/easylogin", methods=['POST'])
+def easylogin():
+    jsonData = request.get_json()
+    user = user_schema.load(jsonData, partial=True) # 받아온 데이터를 user 형태로 자동 매핑
+    return user_service.easylogin(user)
+
 
 @user.route('/tokenlogin', methods=['POST']) #post 방식만 잡아서 처리한다.
 def token_login():    # 토큰 로그인
@@ -43,6 +49,7 @@ def register(): # 회원가입
 @user.route('/withdrawal', methods=['POST']) #post 방식만 잡아서 처리한다.
 def withdrawal():   # 회원탈퇴
     jsonData = request.get_json()
+    print(jsonData['token'])
     return user_service.withdrawal(jsonData['token'])
 
 

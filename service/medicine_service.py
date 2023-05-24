@@ -28,5 +28,9 @@ class Medicine_Service(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def bookmark_all(self, bookmark):   # 즐겨찾기 리스트 함수
+        pass
+
+    @abstractmethod
     def camera_search(self, list):  #카메라 검색 함수
         pass
