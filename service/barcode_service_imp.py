@@ -37,20 +37,6 @@ class Barcode_Service_IMP(Barcode_Service):
             return "false"
         
     def crawling_search(self, barcode):
-        need_list = ["entpName", #업체명
-                    "itemName", #제품명
-                    "itemSeq",   #품목기준코드
-                    "efcyQesitm",    #효능
-                    "useMethodQesitm",   #사용법
-                    "atpnWarnQesitm",    #주의사항경고
-                    "atpnQesitm",    #주의사항
-                    "intrcQesitm",   #상호작용
-                    "seQesitm",  #부작용
-                    "depositMethodQesitm",   #보관방법
-                    "openDe",    #공개일자
-                    "updateDe",  #수정일자
-                    "itemImage"  #낱알 이미지
-                    ]
 
         result_list = []
 
@@ -64,18 +50,21 @@ class Barcode_Service_IMP(Barcode_Service):
         input_elem = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.ID, "stdrCodeName"))
             )
-        input_elem.send_keys(f"{barcode}")
+        input_elem.send_keys(f"{barcode[-13:]}")
 
         button_elem = driver.find_element(By.CSS_SELECTOR, ".btn_search100")
         button_elem.click()
 
         try:
-            print(barcode)
+            print(barcode[-13:])
             # 요소가 보이도록 화면을 스크롤합니다.
             scroll = driver.find_element(By.CSS_SELECTOR, ".table_scroll")
             driver.execute_script("arguments[0].scrollBy(1300, 0)", scroll)
 
-            element = driver.find_element(By.CSS_SELECTOR, "tr.cancel td:nth-child(16) span:nth-child(2)")
+            # element = driver.find_element(By.CSS_SELECTOR, "tr.cancel td:nth-child(16) span:nth-child(2)")
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "tr td:nth-child(16) span:nth-child(2)")))
+            
 
             element.click()
 

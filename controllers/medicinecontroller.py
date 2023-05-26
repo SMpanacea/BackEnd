@@ -98,7 +98,7 @@ def bookmark_all():
 
 @medicine.route('/image', methods=['POST'])
 def image_upload():
-        
+        print("사진 검색 들어옴")
         jsonData = request.get_json()
         front = jsonData["front"]
         back = jsonData["back"]
@@ -112,4 +112,8 @@ def image_upload():
         pillMain = PillMain()
         result = []
         result = pillMain.main(front_image_data, back_image_data)
-        return medicine_service.camera_search(result)
+        print("controller result : ", result)
+        result_json = medicine_service.camera_search(result)
+        print("constroller result_json : ", result_json)
+
+        return result_json

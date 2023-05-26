@@ -91,7 +91,9 @@ class Medicine_Service_Imp(Medicine_Service):
             medicine = Medicine(itemSeq=item["code"], numOfRows=1)
             response = requests.get(config.url, params=medicine.get_params())
             result.append(response.json()["body"])
-            return result
+        print("result : ", result)
+        return result
+    
     def remove_tags(self, data):
         # HTML 태그를 제거하는 정규식 패턴
         cleanr = re.compile('<.*?>')
