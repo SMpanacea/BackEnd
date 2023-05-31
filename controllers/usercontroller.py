@@ -27,10 +27,10 @@ def login():    # 로그인
     return user_service.login(jsonData["uid"], jsonData["upw"]) # 받아온 데이터에서 uid와 upw를 추출하여 login 함수에 넣고 결과값 반환
 
 @user.route("/easylogin", methods=['POST'])
-def easylogin():
+def easylogin(): # 간편 로그인
     jsonData = request.get_json()
     user = user_schema.load(jsonData, partial=True) # 받아온 데이터를 user 형태로 자동 매핑
-    return user_service.easylogin(user)
+    return user_service.easylogin(user) # 간편로그인 결과 반환
 
 
 @user.route('/tokenlogin', methods=['POST']) #post 방식만 잡아서 처리한다.
@@ -43,14 +43,14 @@ def token_login():    # 토큰 로그인
 def register(): # 회원가입
     jsonData = request.get_json()
     user = user_schema.load(jsonData, partial=True) # 받아온 데이터를 user 형태로 자동 매핑
-    return user_service.update(user)
+    return user_service.update(user)    # 회원 가입 결과 반환
 
 
 @user.route('/withdrawal', methods=['POST']) #post 방식만 잡아서 처리한다.
 def withdrawal():   # 회원탈퇴
     jsonData = request.get_json()
     print(jsonData['token'])
-    return user_service.withdrawal(jsonData['token'])
+    return user_service.withdrawal(jsonData['token'])   # 회원 탈퇴 결과 반환
 
 
 @user.route('/update', methods=['POST']) #post 방식만 잡아서 처리한다.
@@ -63,45 +63,45 @@ def user_update():   # 회원정보 수정
         print(user.profile)
         user_service.delete_image(user) # 기존 이미지 삭제
     print(user.profile)
-    return user_service.update(user) 
+    return user_service.update(user)    # 회원정보 수정 결과 반환
 
 
 @user.route('/idcheck', methods=['POST'])
 def id_check(): # 아이디 중복체크
     jsonData = request.get_json() 
-    return user_service.overlap_check("uid",jsonData['uid'])
+    return user_service.overlap_check("uid",jsonData['uid'])    # 아이디 중복체크 결과 반환
 
 
 @user.route('/nicknamecheck', methods=['POST'])
 def nickname_check(): # 닉네임 중복체크
     jsonData = request.get_json()
-    return user_service.overlap_check("nickname",jsonData['nickname']) 
+    return user_service.overlap_check("nickname",jsonData['nickname'])  # 닉네임 중복체크 결과 반환
 
 
 @user.route('/emailcheck', methods=['POST'])
 def email_check(): # 이메일 중복체크
     jsonData = request.get_json()
-    return user_service.overlap_check("email",jsonData['email'])
+    return user_service.overlap_check("email",jsonData['email'])    # 이메일 중복체크 결과 반환
 
 
 @user.route('/sendemail', methods=['POST'])
 def send_email(): # 이메일 인증번호 전송
     email_check = Email_Service_Imp()
     jsonData = request.get_json()
-    return email_check.send_email(jsonData['email'])
+    return email_check.send_email(jsonData['email'])    # 이메일 인증번호 전송 결과 반환
 
 
 @user.route('/findid', methods=['POST'])
 def find_id(): # 아이디 찾기
     jsonData = request.get_json()
     user = user_schema.load(jsonData, partial=True)
-    return user_service.find_id(user) 
+    return user_service.find_id(user)   # 아이디 찾기 결과 반환
 
 @user.route('/findpw', methods=['POST'])
 def find_pw(): # 비밀번호 찾기
     jsonData = request.get_json()
     user = user_schema.load(jsonData, partial=True)
-    return user_service.find_pw(user)
+    return user_service.find_pw(user)   # 비밀번호 찾기 결과 반환
 
 
 @user.route('/info', methods=['POST'])
@@ -110,4 +110,4 @@ def user_info(): # 회원정보 조회
     print(jsonData['token'])
     user_id = token_service.get_id(jsonData['token'])
     print(user_id.uid)
-    return user_service.info(user_id.uid)
+    return user_service.info(user_id.uid)   # 회원정보 조회 결과 반환

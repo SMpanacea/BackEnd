@@ -11,6 +11,7 @@ import openai
 
 class Chat_Service_Imp(Chat_Service):
 
+    # GPT 메세지 형식
     """ messages=[
         {"role": "system", "content": "You are a helpful assistant."}, 시스템에게 역할을 부여
         {"role": "user", "content": "Who won the world series in 2020?"}, 사용자의 메세지
@@ -25,10 +26,7 @@ class Chat_Service_Imp(Chat_Service):
 
         completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        # messages=[
-        #     {"role": "user", "content": f"{content}"}
-        # ]
         messages = content  # 사용자의 메세지를 받아온다.
         )
 
-        return completion.choices[0].message["content"].strip()
+        return completion.choices[0].message["content"].strip() # 대답을 반환한다. (공백을 제거해서 반환)

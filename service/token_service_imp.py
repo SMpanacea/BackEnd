@@ -12,6 +12,7 @@ import jwt
 
 
 class Token_Service_Imp(Token_Service):
+    # 토큰 생성
     def generate_token(self, user_id):
         print(user_id)
         payload = {
@@ -24,13 +25,15 @@ class Token_Service_Imp(Token_Service):
         return token
 
 
+    # 토큰 검사
     def validate_token(self, token):
         secret_key = config.TOKEN_KEY 
         try:
             print("토큰 검사~", token)
+            # 토큰 검증
             payload = jwt.decode(token, secret_key, algorithms=['HS256'])
             print("이자식 아이디",payload.get('user_id'))
-            return payload.get('user_id')
+            return payload.get('user_id')   # 토큰에서 user_id 반환
         except jwt.ExpiredSignatureError:
             # 토큰이 만료된 경우
             print("만료")

@@ -45,32 +45,32 @@ class User_Service_Imp(User_Service):
             else :   # 결과값이 존재하지 않는다면 로그인 실패
                 return "false"
             
-    def easylogin(self, user):
+    def easylogin(self, user):  #간편 로그인 함수
         user_id = user.uid
         try:
-            result = User.query.filter_by(uid = user_id).first()
+            result = User.query.filter_by(uid = user_id).first()    # 아이디가 일치하는 값의 검색 결과가 나오는지 확인
         except Exception as e:
             print(e)
             return 'false'
         else:
-            if result:
-                token = token_service.generate_token(result.uid)
+            if result:  # 결과값이 존재
+                token = token_service.generate_token(result.uid)    # 토큰 생성
                 print("token",token)
-                return token
-            elif result == None:
-                self.update(user)
-                token = token_service.generate_token(user_id)
+                return token    # 토큰 반환
+            elif result == None:    # 결과값이 존재하지 않은경우
+                self.update(user)   # 회원정보 추가
+                token = token_service.generate_token(user_id)   # 토큰 생성
                 print("...?",token)
-                return token
+                return token    # 토큰 반환
             else: 
                 return 'false'
 
 
     def token_login(self, token):  # 토큰 로그인 함수
-        user_data = token_service.validate_token(token)
-        if user_data == "false":
+        user_data = token_service.validate_token(token) # 토큰이 유효한지 확인
+        if user_data == "false":    # 토큰이 유효하지 않은 경우
             return "false"
-        else:   
+        else:      # 토큰이 유효한 경우
             return 'true'
 
 
@@ -96,7 +96,7 @@ class User_Service_Imp(User_Service):
                 return "false"
             else:   #토큰이 유효한 경우
                 print("삭제 드가자~")
-                User.query.filter_by(uid = usertoken.uid).delete()
+                User.query.filter_by(uid = usertoken.uid).delete()  #아이디가 일치하는 회원정보 삭제
                 db.session.commit()
         except Exception as e:
             print(e)
@@ -119,28 +119,28 @@ class User_Service_Imp(User_Service):
             
     def find_id(self, user):
         try:
-            result = User.query.filter_by(email = user.email).first()
+            result = User.query.filter_by(email = user.email).first()   #이메일이 일치하는 값의 검색 결과가 나오는지 확인
         except Exception as e:
             print(e)
             return 'false'
         else:
-            if result:
+            if result:  # 결과값이 존재한다면 아이디 반환
                 return jsonify(result.uid)
-            else:
+            else:   # 결과값이 존재하지 않는다면 false 반환
                 return 'false'
             
 
-    def find_pw(self, user):
+    def find_pw(self, user):    #비밀번호 찾기 함수
         try:
-            result = User.query.filter_by(uid = user.uid, email = user.email).first()
+            result = User.query.filter_by(uid = user.uid, email = user.email).first()   #아이디와 이메일이 일치하는 값의 검색 결과가 나오는지 확인
         except Exception as e:
             print(e)
             return 'false'
         else:
             if result:
-                return "true"
+                return "true"   # 결과값이 존재한다면 true 반환 (알려주는게 아닌 바꾸게 해야해서)
             else:
-                return 'false'
+                return 'false'  # 결과값이 존재하지 않는다면 false 반환
             
 
     def image_upload(self, base64_image_data):
@@ -180,6 +180,7 @@ class User_Service_Imp(User_Service):
 
         # 업로드된 객체의 URL을 생성합니다.
         url = bucket.meta.client.generate_presigned_url('get_object', Params={'Bucket': config.bucket_name, 'Key': object_key}, ExpiresIn=3600)
+        print(url)
 
         return url # 파일 업로드된 객체 URI 반환합니다.
     

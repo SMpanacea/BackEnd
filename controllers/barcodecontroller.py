@@ -9,7 +9,7 @@ from service.barcode_service_imp import Barcode_Service_IMP
 
 barcode = Blueprint('barcode', __name__)
 
-
+# 바코드 검색
 @barcode.route('/search', methods=['GET'])
 def search():
     barcode_service = Barcode_Service_IMP()

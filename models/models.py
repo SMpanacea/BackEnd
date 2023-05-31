@@ -6,6 +6,7 @@ import secret_key.config as config
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
+# 회원
 class User(db.Model):
     __tablename__ = "users"
     uid = db.Column(db.String, primary_key=True)
@@ -14,7 +15,7 @@ class User(db.Model):
     nickname = db.Column(db.String, nullable=True)
     gender = db.Column(db.String, nullable=True)
     birth = db.Column(db.String, nullable=True)
-    profile = db.Column(db.String, nullable=True, default=config.IMAGE_URL+"default/default_profile.jpg")
+    profile = db.Column(db.String, nullable=True, default=config.IMAGE_URL+"default/user_default.jpg")
 
     def serialize(self):
         return {
@@ -26,12 +27,13 @@ class User(db.Model):
             'profile': self.profile,
         }
     
+# 북마크 (즐겨찾기)
 class BookMark(db.Model):
     __tablename__ = "bookmarks"
     uid = db.Column(db.String,db.ForeignKey('users.uid'), primary_key=True)
     itemSeq = db.Column(db.String, primary_key=True)
     itemName = db.Column(db.String, nullable=False)
-    itemImage = db.Column(db.String, nullable=True, default=config.IMAGE_URL+"default/medicine_default.jpg")
+    itemImage = db.Column(db.String, nullable=True)
     updateDe = db.Column(db.String, nullable=True)
 
     def serialize(self):

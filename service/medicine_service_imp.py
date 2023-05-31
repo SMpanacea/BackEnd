@@ -18,7 +18,7 @@ class Medicine_Service_Imp(Medicine_Service):
     def search(self, medicine):  # 약 정보 통신 함수
         response = requests.get(config.url, params=medicine.get_params())
         print(response.json())
-        return response.json()["body"]
+        return response.json()["body"]  # 약 정보만 반환
 
 
     def detail(self, itemSeq):
@@ -30,7 +30,7 @@ class Medicine_Service_Imp(Medicine_Service):
                             + self.remove_tags(multi_result["body"]["items"]))
         else:   # 병용 금기 정보가 없을 경우
             detail_result = self.remove_tags(search_result["items"][0])
-        return detail_result
+        return detail_result    # 정보 반환
 
 
     def multi_info(self, itemSeq): # 병용 금기 정보 통신 함수
@@ -40,59 +40,63 @@ class Medicine_Service_Imp(Medicine_Service):
 
     def bookmark(self, bookmark):   # 즐겨찾기 함수
         try:
-            db.session.add(bookmark)
-            db.session.commit()
+            db.session.add(bookmark)    # 즐겨찾기 추가
+            db.session.commit() # 커밋
         except Exception as e:
             print(e)
             return 'false'
         else:
-            return self.bookmark_list(bookmark)
+            return self.bookmark_list(bookmark) # 즐겨찾기 리스트 반환
+
 
     def bookmark_off(self, bookmark):   # 즐겨찾기 해제 함수
         try:
-            BookMark.query.filter_by(uid=bookmark.uid , itemSeq=bookmark.itemSeq).delete()
-            db.session.commit()
+            BookMark.query.filter_by(uid=bookmark.uid , itemSeq=bookmark.itemSeq).delete()  # 즐겨찾기 삭제
+            db.session.commit() # 커밋
         except Exception as e:
             print(e)
             return 'false'
         else:
-            return self.bookmark_list(bookmark)
+            return self.bookmark_list(bookmark) # 즐겨찾기 리스트 반환
         
+
     def bookmark_list(self, bookmark):   # 즐겨찾기 리스트 함수
         try:
-            result = BookMark.query.filter_by(uid=bookmark.uid).all()
+            result = BookMark.query.filter_by(uid=bookmark.uid).all()   # 회원의 즐겨찾기 리스트 가져오기
         except Exception as e:
             print(e)
             return 'false'
         else:
             list = []
-            for bookmark_one in result:
+            for bookmark_one in result: # 즐겨찾기 리스트를 객체에서 리스트로 변환
                 list.append(bookmark_one.__dict__["itemSeq"])
-            return jsonify(list)
+            return jsonify(list)    # 즐겨찾기 리스트 json으로 반환
         
-    def bookmark_all(self, bookmark):
+
+    def bookmark_all(self, bookmark):   # 즐겨찾기 상세 리스트 함수
         try:
-            result = BookMark.query.filter_by(uid=bookmark.uid).all()
+            result = BookMark.query.filter_by(uid=bookmark.uid).all()   # 회원의 즐겨찾기 리스트 가져오기
         except Exception as e:
             print(e)
             return 'false'
         else:
             booklist = []
             print(result)
-            for bookmark_one in result:
+            for bookmark_one in result: # 즐겨찾기 리스트를 객체에서 리스트로 변환
                 booklist.append(bookmark_one.serialize())
             print(booklist)
             print([bookmark.serialize() for bookmark in result])
-            return  booklist
+            return  booklist    # 즐겨찾기 상세 리스트  반환
     
-    def camera_search(self, list):
+
+    def camera_search(self, list):  # 카메라 검색 함수
         result = []
-        for item in list:
+        for item in list:   # 카메라 검색 리스트를 통해 약 정보 가져오기
             medicine = Medicine(itemSeq=item["code"], numOfRows=1)
             response = requests.get(config.url, params=medicine.get_params())
             result.append(response.json()["body"])
         print("result : ", result)
-        return result
+        return result   # 약 정보 반환
     
     def remove_tags(self, data):
         # HTML 태그를 제거하는 정규식 패턴

@@ -34,3 +34,7 @@ class Medicine_Service(metaclass=ABCMeta):
     @abstractmethod
     def camera_search(self, list):  #카메라 검색 함수
         pass
+
+    @abstractmethod
+    def remove_tags(self, data):
+        pass
